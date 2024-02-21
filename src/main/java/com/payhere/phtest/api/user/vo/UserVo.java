@@ -18,6 +18,4 @@ public class UserVo {
 
     private String mobile;
 
-//    private String userState;
-
 }

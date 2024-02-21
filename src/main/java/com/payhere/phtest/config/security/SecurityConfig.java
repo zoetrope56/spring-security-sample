@@ -1,6 +1,5 @@
 package com.payhere.phtest.config.security;
 
-import com.payhere.phtest.config.filter.CustomAuthenticationFilter;
 import com.payhere.phtest.config.filter.JwtAuthorizationFilter;
 import com.payhere.phtest.config.handler.CustomAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
@@ -10,26 +9,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.function.Supplier;
 
 @Slf4j
 @Configuration
@@ -62,7 +54,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationFilter customAuthenticationFilter, JwtAuthorizationFilter jwtAuthorizationFilter) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthorizationFilter jwtAuthorizationFilter) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -73,12 +65,7 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(jwtAuthorizationFilter, JwtAuthorizationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .formLogin(login -> login
-                        .loginPage("/login")
-                        .successHandler(new SimpleUrlAuthenticationSuccessHandler("/main/rootPage"))
-                        .permitAll()
-                )
-                .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .formLogin(AbstractHttpConfigurer::disable)
                 .build();
     }
 
@@ -129,21 +116,6 @@ public class SecurityConfig {
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter(UserDetailsService userDetailsService) {
         return new JwtAuthorizationFilter(userDetailsService);
-    }
-
-    /**
-     * isAdmin 메소드는 Supplier<Authentication>와 RequestAuthorizationContext를 인자로 받아서 "ADMIN" 역할을 가진 사용자인지 확인한다.
-     * 만약 사용자가 "ADMIN" 역할을 가지고 있다면, AuthorizationDecision 객체는 true를 반환하고, 그렇지 않다면 false를 반환한다.
-     */
-    private AuthorizationDecision isAdmin(
-            Supplier<Authentication> authenticationSupplier,
-            RequestAuthorizationContext requestAuthorizationContext
-    ) {
-        return new AuthorizationDecision(
-                authenticationSupplier.get()
-                        .getAuthorities()
-                        .contains(new SimpleGrantedAuthority("ADMIN"))
-        );
     }
 
 }

@@ -24,7 +24,7 @@ public class TokenUtils {
 
 
     private static final String jwtSecretKey = "thisIsASecretKeyUsedForJwtTokenGenerationAndItIsLongEnoughToMeetTheRequirementOf256Bits";
-    // jwtSecretKey를 바이트 배열로 변환하고, 이를 사용하여 HMAC-SHA256 알고리즘에 사용할 키를 생성한다.
+    // jwt SecretKey 를 바이트 배열로 변환 -> HMAC-SHA256 알고리즘에 사용할 키 생성
     private static final Key key = Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
     private static final String JWT_TYPE = "JWT";
     private static final String ALGORITHM = "HS256";
@@ -39,12 +39,12 @@ public class TokenUtils {
 
         JwtBuilder builder = Jwts.builder()
                 .signWith(key)
-                .setHeader(createHeader())                                  // Header 구성
-                .setClaims(createClaims(userVo))                           // Payload - Claims구성
-                .setSubject(String.valueOf(userVo.getUserId()))              // Payload - Subjects구성
-                .setIssuer("profile")                                       // Issuer 구성
-//                .signWith(key, SignatureAlgorithm.HS256)                    // Signature 구성 : 이 키를 사용하여 JWT 토큰에 서명을 추가한다. 이 서명은 토큰의 무결성을 보장하는 데 사용된다.
-                .setExpiration(createExpiredDate());                        // Expired Date 구성
+                .setHeader(createHeader())                          // Header 구성
+                .setClaims(createClaims(userVo))                    // Payload - Claims구성
+                .setSubject(String.valueOf(userVo.getUserId()))     // Payload - Subjects구성
+                .setIssuer("profile")                               // Issuer 구성
+//                .signWith(key, SignatureAlgorithm.HS256)          // Signature 구성 : 이 키를 사용하여 JWT 토큰에 서명을 추가한다. 이 서명은 토큰의 무결성을 보장하는 데 사용된다.
+                .setExpiration(createExpiredDate());                // Expired Date 구성
 
         return builder.compact();
     }
@@ -75,6 +75,7 @@ public class TokenUtils {
 
     /**
      * 토큰의 만료기간을 지정하는 함수
+     *
      * @return Date
      */
     private static Date createExpiredDate() {
@@ -98,6 +99,7 @@ public class TokenUtils {
 
     /**
      * 사용자 정보를 기반으로 클래임을 생성해주는 메서드
+     *
      * @param userVo 사용자 정보
      * @return Map<String, Object>
      */
@@ -115,6 +117,7 @@ public class TokenUtils {
 
     /**
      * 토큰 정보를 기반으로 Claims 정보를 반환받는 메서드
+     *
      * @return Claims : Claims
      */
     private static Claims getClaimsFormToken(String token) {
@@ -124,6 +127,7 @@ public class TokenUtils {
 
     /**
      * 토큰을 기반으로 사용자 정보를 반환받는 메서드
+     *
      * @return String : 사용자 아이디
      */
     public static String getUserIdFromToken(String token) {

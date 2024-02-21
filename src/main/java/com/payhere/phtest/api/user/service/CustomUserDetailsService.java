@@ -1,4 +1,4 @@
-package com.payhere.phtest.config.security;
+package com.payhere.phtest.api.user.service;
 
 import com.payhere.phtest.api.user.mapper.UserMapper;
 import com.payhere.phtest.api.user.vo.UserVo;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserMapper userMapper;
 
