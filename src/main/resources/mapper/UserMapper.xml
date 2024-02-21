@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.payhere.phtest.api.user.mapper.UserMapper">
+<mapper namespace="com.example.demo.api.user.mapper.UserMapper">
 
-    <select id="selectUserById" resultType="com.payhere.phtest.api.user.vo.UserVo">
+    <select id="selectUserById" resultType="com.example.demo.api.user.vo.UserVo">
         SELECT *
         FROM user_mst
         WHERE USER_ID = #{userId}
     </select>
 
-    <select id="selectUserByPhone" resultType="com.payhere.phtest.api.user.vo.UserVo">
+    <select id="selectUserByPhone" resultType="com.example.demo.api.user.vo.UserVo">
         SELECT *
         FROM user_mst um
         WHERE um.MOBILE = #{mobile}
     </select>
 
-    <select id="selectUserByName" resultType="com.payhere.phtest.api.user.vo.UserVo">
+    <select id="selectUserByName" resultType="com.example.demo.api.user.vo.UserVo">
         SELECT *
         FROM user_mst um
         WHERE um.MOBILE = #{userName}
     </select>
 
-    <insert id="insertUser" parameterType="com.payhere.phtest.api.user.vo.UserVo">
+    <insert id="insertUser" parameterType="com.example.demo.api.user.vo.UserVo">
         INSERT INTO user_mst (
           USERNAME,
           PASSWORD,
