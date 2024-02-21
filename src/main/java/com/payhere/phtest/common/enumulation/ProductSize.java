@@ -1,27 +1,18 @@
 package com.payhere.phtest.common.enumulation;
 
-public enum ProductSize {
-    SMALL("small", "스몰 사이즈"), LARGE("large", "라지 사이즈");
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-    private String value;
-    private String desc;
+@Getter
+@RequiredArgsConstructor
+public enum ProductSize implements CodeGroup {
+    SMALL("small"), LARGE("large");
 
+    private final String code;
 
-    ProductSize(String v, String d) {
-        value = v;
-        desc = d;
+    @Override
+    public String getGroupName() {
+        return null;
     }
 
-    public String value() {
-        return value;
-    }
-
-    public static ProductSize fromValue(String v) {
-        for (ProductSize c : ProductSize.values()) {
-            if (c.value.equals(v)) {
-                return c;
-            }
-        }
-        throw new IllegalArgumentException(v);
-    }
 }

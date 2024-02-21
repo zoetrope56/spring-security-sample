@@ -1,0 +1,126 @@
+
+spring:
+  profiles:
+    group:
+      "local": "local, common"
+      "dev": "dev, common"
+      "prod": "prd, common"
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "common"
+  mvc:
+    pathmatch:
+      matching-strategy: path_pattern_parser
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate.default_batch_fetch_size: 1000
+
+# local, dev, prod 공통 설정
+server:
+  port: 8086
+  servlet:
+    context-path: '/api/v1'
+
+springdoc:
+  packages-to-scan: com.payhere.phtest.api.controller
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    path: /
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alpha
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    default-statement-timeout: 30
+  mapper-locations: classpath:mapper/**.xml
+#  type-aliases-package: classpath:mapper/**.xml
+
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/payhere_test?useSSL=false&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: root
+    password: 12345678
+  mvc:
+    async:
+      request-timeout: 2000
+  thymeleaf:
+    cache: false
+  jpa:
+    database: mysql
+    generate-ddl: false
+    #    show-sql: true
+auth:
+  token:
+    jwt:
+      secret-key: payheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthost
+      expiration-time: 1800000
+      refresh-expiration-time: 1209600000
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/payhere_test?useSSL=false&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: root
+    password: 12345678
+  mvc:
+    async:
+      request-timeout: 2000
+  thymeleaf:
+    cache: false
+  jpa:
+    database: mysql
+    generate-ddl: false
+    #    show-sql: true
+auth:
+  token:
+    jwt:
+      secret-key: payheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthost
+      expiration-time: 1800000
+      refresh-expiration-time: 1209600000
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prd
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://3.35.22.96:3306/payhere_test?useSSL=false&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: zoetrope
+    password: Ztlog1234!@#$
+  mvc:
+    async:
+      request-timeout: 2000
+  thymeleaf:
+    cache: false
+  jpa:
+    database: mysql
+    generate-ddl: false
+    #    show-sql: true
+auth:
+  token:
+    jwt:
+      secret-key: payheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthost
+      expiration-time: 1800000
+      refresh-expiration-time: 1209600000

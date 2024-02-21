@@ -1,4 +1,4 @@
-package com.payhere.phtest.common.vo;
+package com.payhere.phtest.common.dto;
 
 import com.payhere.phtest.common.enumulation.ResponseCode;
 import lombok.AllArgsConstructor;

@@ -8,5 +8,32 @@
         WHERE USER_ID = #{userId}
     </select>
 
+    <select id="selectUserByPhone" resultType="com.payhere.phtest.api.user.vo.UserVo">
+        SELECT *
+        FROM user_mst um
+        WHERE um.MOBILE = #{mobile}
+    </select>
+
+    <select id="selectUserByName" resultType="com.payhere.phtest.api.user.vo.UserVo">
+        SELECT *
+        FROM user_mst um
+        WHERE um.MOBILE = #{userName}
+    </select>
+
+    <insert id="insertUser" parameterType="com.payhere.phtest.api.user.vo.UserVo">
+        INSERT INTO user_mst (
+          USERNAME,
+          PASSWORD,
+          MOBILE,
+          INP_DTTM,
+          UPD_DTTM
+        ) VALUES (
+          #{userName},
+          #{password},
+          #{mobile},
+          NOW(),
+          NOW())
+    </insert>
+
 
 </mapper>

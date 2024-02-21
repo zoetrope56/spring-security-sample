@@ -12,6 +12,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ProductVo {
 
+    private Long productNo;
+
     private String category;
 
     private Long sellingPrice;
