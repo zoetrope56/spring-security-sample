@@ -3,7 +3,6 @@ package com.example.demo.api.user.controller;
 import com.example.demo.api.user.dto.LoginReqDto;
 import com.example.demo.api.user.dto.SignupReqDto;
 import com.example.demo.api.user.dto.UserDto;
-import com.payhere.phtest.api.user.dto.*;
 import com.example.demo.api.user.service.UserService;
 import com.example.demo.common.enumulation.ResponseCode;
 import com.example.demo.common.dto.Response;
