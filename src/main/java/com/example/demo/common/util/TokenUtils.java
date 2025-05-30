@@ -39,8 +39,8 @@ public class TokenUtils {
         JwtBuilder builder = Jwts.builder()
                 .signWith(key)
                 .setHeader(createHeader())                          // Header 구성
-                .setClaims(createClaims(userVo))                    // Payload - Claims구성
-                .setSubject(String.valueOf(userVo.getUserId()))     // Payload - Subjects구성
+                .setClaims(createClaims(userVo))                    // Payload - Claims 구성
+                .setSubject(String.valueOf(userVo.getUserId()))     // Payload - Subjects 구성
                 .setIssuer("profile")                               // Issuer 구성
 //                .signWith(key, SignatureAlgorithm.HS256)          // Signature 구성 : 이 키를 사용하여 JWT 토큰에 서명을 추가한다. 이 서명은 토큰의 무결성을 보장하는 데 사용된다.
                 .setExpiration(createExpiredDate());                // Expired Date 구성
