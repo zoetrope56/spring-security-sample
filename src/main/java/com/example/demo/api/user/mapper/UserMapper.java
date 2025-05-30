@@ -1,6 +1,6 @@
 package com.example.demo.api.user.mapper;
 
-import com.example.demo.api.user.vo.UserVo;
+import com.example.demo.api.user.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Optional;
@@ -8,12 +8,12 @@ import java.util.Optional;
 @Mapper
 public interface UserMapper {
 
-    UserVo selectUserById(Long userId);
+    User selectUserById(Long userId);
 
-    UserVo selectUserByName(String username);
+    User selectUserByName(String username);
 
-    Optional<UserVo> selectUserByPhone(String phoneNum);
+    Optional<User> selectUserByPhone(String phoneNum);
 
-    void insertUser(UserVo user);
+    void insertUser(User user);
 
 }

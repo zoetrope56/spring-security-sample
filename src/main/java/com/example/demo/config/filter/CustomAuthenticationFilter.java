@@ -3,7 +3,7 @@ package com.example.demo.config.filter;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.example.demo.api.user.vo.UserVo;
+import com.example.demo.api.user.entity.User;
 import com.example.demo.common.enumulation.ResponseCode;
 import com.example.demo.config.exception.InternalServerException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,14 +47,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             objectMapper.registerModule(new JavaTimeModule());
             objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
 
-            UserVo user = objectMapper.readValue(request.getInputStream(), UserVo.class);
+            User user = objectMapper.readValue(request.getInputStream(), User.class);
             log.debug("1.CustomAuthenticationFilter :: loginId: " + user.getUserId());
 
             /**
              * ID, PW를 기반으로 UsernamePasswordAuthenticationToken 토큰을 발급한다.
              * UsernamePasswordAuthenticationToken 객체가 처음 생성될 때 authenticated 필드는 기본적으로 false로 설정된다.
              */
-            return new UsernamePasswordAuthenticationToken(user.getUserId(), user.getPassword());
+            return new UsernamePasswordAuthenticationToken(user.getUserId(), user.getUserPassword());
         } catch (UsernameNotFoundException e) {
             throw new UsernameNotFoundException(e.getMessage());
         } catch (Exception e) {

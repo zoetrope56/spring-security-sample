@@ -1,6 +1,6 @@
 package com.example.demo.common.util;
 
-import com.example.demo.api.user.vo.UserVo;
+import com.example.demo.api.user.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +34,13 @@ public class TokenUtils {
     /**
      * 사용자 pk를 기준으로 JWT 토큰을 발급하여 반환해 준다.
      */
-    public static String generateJwtToken(UserVo userVo) {
+    public static String generateJwtToken(User user) {
 
         JwtBuilder builder = Jwts.builder()
                 .signWith(key)
                 .setHeader(createHeader())                          // Header 구성
-                .setClaims(createClaims(userVo))                    // Payload - Claims 구성
-                .setSubject(String.valueOf(userVo.getUserId()))     // Payload - Subjects 구성
+                .setClaims(createClaims(user))                    // Payload - Claims 구성
+                .setSubject(String.valueOf(user.getUserId()))     // Payload - Subjects 구성
                 .setIssuer("profile")                               // Issuer 구성
 //                .signWith(key, SignatureAlgorithm.HS256)          // Signature 구성 : 이 키를 사용하여 JWT 토큰에 서명을 추가한다. 이 서명은 토큰의 무결성을 보장하는 데 사용된다.
                 .setExpiration(createExpiredDate());                // Expired Date 구성
@@ -99,18 +99,18 @@ public class TokenUtils {
     /**
      * 사용자 정보를 기반으로 클래임을 생성해주는 메서드
      *
-     * @param userVo 사용자 정보
+     * @param user 사용자 정보
      * @return Map<String, Object>
      */
-    private static Map<String, Object> createClaims(UserVo userVo) {
+    private static Map<String, Object> createClaims(User user) {
         // 공개 클래임에 사용자의 이름과 이메일을 설정해서 정보를 조회할 수 있다.
         Map<String, Object> claims = new HashMap<>();
 
-        log.info("loginId : " + userVo.getUserId());
-        log.info("username : " + userVo.getUserName());
+        log.info("loginId : " + user.getUserId());
+        log.info("username : " + user.getUserName());
 
-        claims.put(LOGIN_ID, userVo.getUserId());
-        claims.put(USERNAME, userVo.getUserName());
+        claims.put(LOGIN_ID, user.getUserId());
+        claims.put(USERNAME, user.getUserName());
         return claims;
     }
 

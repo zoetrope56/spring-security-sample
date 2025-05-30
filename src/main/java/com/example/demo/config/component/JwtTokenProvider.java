@@ -1,9 +1,9 @@
 package com.example.demo.config.component;
 
+import com.example.demo.api.user.dto.UserDetailDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.example.demo.api.user.vo.UserVo;
-import com.example.demo.common.dto.UserInfo;
+import com.example.demo.api.user.entity.User;
 import com.example.demo.common.enumulation.ResponseCode;
 import com.example.demo.config.exception.TokenAuthenticationException;
 import io.jsonwebtoken.Claims;
@@ -42,10 +42,10 @@ public class JwtTokenProvider {
     /**
      * 인증 토큰 생성
      *
-     * @param userVo 사용자 정보
+     * @param user 사용자 정보
      * @return 인증 토큰
      */
-    public String generateToken(UserVo userVo) {
+    public String generateToken(User user) {
         // 만료일
         final var expirationDate = new Date(System.currentTimeMillis() + Long.parseLong(this.expirationTime));
 
@@ -58,10 +58,10 @@ public class JwtTokenProvider {
         // 토큰 body
         final var claimsMap = new HashMap<String, Object>();
         try {
-            claimsMap.put(TOKEN_BODY_INFO_KEY, this.objectMapper.writeValueAsString(userVo));
+            claimsMap.put(TOKEN_BODY_INFO_KEY, this.objectMapper.writeValueAsString(user));
         } catch (JsonProcessingException e) {
             if (log.isErrorEnabled()) {
-                log.error("토큰 생성 오류 사용자 정보 --> {}", userVo);
+                log.error("토큰 생성 오류 사용자 정보 --> {}", user);
                 log.error(e.getMessage(), e);
             }
             throw new TokenAuthenticationException(ResponseCode.UNAUTHORIZED_INVALID_TOKEN.getMessage());
@@ -72,7 +72,7 @@ public class JwtTokenProvider {
         final var jwtBuilder =
                 Jwts.builder()
                         .signWith(keySpec)
-                        .setSubject("payhere-test:" + userVo.getUserNo())
+                        .setSubject("spring-security-test:" + user.getUserNo())
                         .setExpiration(expirationDate)
                         .setHeader(header)
                         .setClaims(claimsMap);
@@ -115,7 +115,7 @@ public class JwtTokenProvider {
      * @param token 인증 토큰
      * @return 검사 결과 (성공 시 사용자 정보 반환)
      */
-    public UserInfo validateToken(String token) {
+    public UserDetailDto validateToken(String token) {
         final Claims claims =
                 Jwts.parserBuilder()
                         .setSigningKey(DatatypeConverter.parseBase64Binary(this.secretKey))
@@ -130,9 +130,9 @@ public class JwtTokenProvider {
         try {
             final var infoString = (String) claims.get(TOKEN_BODY_INFO_KEY);
             if (StringUtils.isNotBlank(infoString)) {
-                final var userVo = this.objectMapper.readValue(infoString, UserVo.class);
+                final var user = this.objectMapper.readValue(infoString, User.class);
 
-                return new UserInfo(userVo);
+                return new UserDetailDto(user);
             } else {
                 throw new TokenAuthenticationException("유효한 토큰이 아닙니다.");
             }

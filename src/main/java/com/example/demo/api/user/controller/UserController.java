@@ -58,7 +58,7 @@ public class UserController {
      */
     @Operation(summary = "로그인하기", description = "로그인하기")
     @PostMapping("/login")
-    public ResponseEntity<Response<String>> login(@RequestBody LoginReqDto reqDto, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Response<String>> login(@RequestBody SignupReqDto reqDto, HttpServletRequest request, HttpServletResponse response) {
         userService.login(reqDto);
         return Response.success(ResponseCode.OK_SUCCESS);
     }

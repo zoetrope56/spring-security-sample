@@ -1,38 +1,37 @@
-package com.example.demo.common.dto;
+package com.example.demo.api.user.dto;
 
-import com.example.demo.api.user.vo.UserVo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
-@ToString
-@RequiredArgsConstructor
-public class UserInfo implements UserDetails {
+@Getter
+@AllArgsConstructor
+public class UserDetailDto implements UserDetails {
 
-    @Getter
-    private final UserVo userVo;
+    // @Delegate 어노테이션을 사용하여 UserDto 객체의 메서드를 이 클래스에서 직접 사용가능
+    @Delegate
+    private UserDto userDto;
 
     private Collection<? extends GrantedAuthority> authorities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authorities;
     }
 
     @Override
     public String getPassword() {
-        return null;
+        return userDto.getUserPassword();
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return userDto.getUserName();
     }
 
     @Override

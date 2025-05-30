@@ -68,42 +68,42 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .build();
     }
-
-    /**
-     * 2. authenticate 의 인증 메서드를 제공하는 매니져로'Provider'의 인터페이스를 의미한다.
-     * 이 메서드는 인증 매니저를 생성한다. 인증 매니저는 인증 과정을 처리하는 역할을 한다.
-     * 과정: CustomAuthenticationFilter → AuthenticationManager(interface) → CustomAuthenticationProvider(implements)
-     */
-    @Bean
-    public AuthenticationManager authenticationManager(CustomAuthenticationProvider customAuthenticationProvider) {
-        return new ProviderManager(Collections.singletonList(customAuthenticationProvider));
-    }
-
-    /**
-     * 3. '인증' 제공자로 사용자의 이름과 비밀번호가 요구된다.
-     * 이 메서드는 사용자 정의 인증 제공자를 생성한다. 인증 제공자는 사용자 이름과 비밀번호를 사용하여 인증을 수행한다.
-     * 과정: CustomAuthenticationFilter → AuthenticationManager(interface) → CustomAuthenticationProvider(implements)
-     */
-    @Bean
-    public CustomAuthenticationProvider customAuthenticationProvider(UserDetailsService userDetailsService) {
-        return new CustomAuthenticationProvider(
-                userDetailsService
-        );
-    }
-
-    /**
-     * 4. Spring Security 기반의 사용자의 정보가 맞을 경우 수행이 되며 결과값을 리턴해주는 Handler
-     * customLoginSuccessHandler: 이 메서드는 인증 성공 핸들러를 생성한다. 인증 성공 핸들러는 인증 성공시 수행할 작업을 정의한다.
-     */
+//
+//    /**
+//     * 2. authenticate 의 인증 메서드를 제공하는 매니져로'Provider'의 인터페이스를 의미한다.
+//     * 이 메서드는 인증 매니저를 생성한다. 인증 매니저는 인증 과정을 처리하는 역할을 한다.
+//     * 과정: CustomAuthenticationFilter → AuthenticationManager(interface) → CustomAuthenticationProvider(implements)
+//     */
+//    @Bean
+//    public AuthenticationManager authenticationManager(CustomAuthenticationProvider customAuthenticationProvider) {
+//        return new ProviderManager(Collections.singletonList(customAuthenticationProvider));
+//    }
+//
+//    /**
+//     * 3. '인증' 제공자로 사용자의 이름과 비밀번호가 요구된다.
+//     * 이 메서드는 사용자 정의 인증 제공자를 생성한다. 인증 제공자는 사용자 이름과 비밀번호를 사용하여 인증을 수행한다.
+//     * 과정: CustomAuthenticationFilter → AuthenticationManager(interface) → CustomAuthenticationProvider(implements)
+//     */
+//    @Bean
+//    public CustomAuthenticationProvider customAuthenticationProvider(UserDetailsService userDetailsService) {
+//        return new CustomAuthenticationProvider(
+//                userDetailsService
+//        );
+//    }
+//
+//    /**
+//     * 4. Spring Security 기반의 사용자의 정보가 맞을 경우 수행이 되며 결과값을 리턴해주는 Handler
+//     * customLoginSuccessHandler: 이 메서드는 인증 성공 핸들러를 생성한다. 인증 성공 핸들러는 인증 성공시 수행할 작업을 정의한다.
+//     */
 //    @Bean
 //    public CustomAuthSuccessHandler customLoginSuccessHandler() {
 //        return new CustomAuthSuccessHandler();
 //    }
-
-    /**
-     * 5. Spring Security 기반의 사용자의 정보가 맞지 않을 경우 수행이 되며 결과값을 리턴해주는 Handler
-     * customLoginFailureHandler: 이 메서드는 인증 실패 핸들러를 생성한다. 인증 실패 핸들러는 인증 실패시 수행할 작업을 정의한다.
-     */
+//
+//    /**
+//     * 5. Spring Security 기반의 사용자의 정보가 맞지 않을 경우 수행이 되며 결과값을 리턴해주는 Handler
+//     * customLoginFailureHandler: 이 메서드는 인증 실패 핸들러를 생성한다. 인증 실패 핸들러는 인증 실패시 수행할 작업을 정의한다.
+//     */
 //    @Bean
 //    public CustomAuthFailureHandler customLoginFailureHandler() {
 //        return new CustomAuthFailureHandler();

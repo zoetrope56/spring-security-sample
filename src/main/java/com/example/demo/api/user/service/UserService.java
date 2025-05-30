@@ -1,10 +1,9 @@
 package com.example.demo.api.user.service;
 
 import com.example.demo.api.user.dto.UserDto;
-import com.example.demo.api.user.dto.LoginReqDto;
 import com.example.demo.api.user.dto.SignupReqDto;
 import com.example.demo.api.user.mapper.UserMapper;
-import com.example.demo.api.user.vo.UserVo;
+import com.example.demo.api.user.entity.User;
 import com.example.demo.common.enumulation.ResponseCode;
 import com.example.demo.config.exception.DataConflictException;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +39,7 @@ public class UserService {
             throw new DataConflictException(ResponseCode.CONFLICT_USER_ERROR.getMessage());
 
         // vo create
-        UserVo user = UserVo.builder()
+        User user = User.builder()
                 .userName(reqDto.getName())
                 .mobile(reqDto.getMobile())
                 .password(passwordEncoder.encode(reqDto.getPassword()))
@@ -49,7 +48,7 @@ public class UserService {
         this.userMapper.insertUser(user);
     }
 
-    public void login(LoginReqDto reqDto) {
+    public void login(SignupReqDto reqDto) {
 
     }
 

@@ -1,8 +1,7 @@
 package com.example.demo.api.user.service;
 
 import com.example.demo.api.user.mapper.UserMapper;
-import com.example.demo.api.user.vo.UserVo;
-import com.example.demo.common.dto.UserInfo;
+import com.example.demo.api.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +16,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserVo userVo = userMapper.selectUserByName(username);
-        return new UserInfo(userVo);
+        User user = userMapper.selectUserByName(username);
+        return new UserInfo(user);
     }
 }

@@ -91,9 +91,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             log.error("{}", e.getMessage());
 
             // 클라이언트에게 전송할 고정된 메시지
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            response.setCharacterEncoding("UTF-8");
-//            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json");
 
         }
     }

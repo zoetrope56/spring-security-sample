@@ -1,6 +1,5 @@
 package com.example.demo.config.handler;
 
-import com.example.demo.common.dto.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;

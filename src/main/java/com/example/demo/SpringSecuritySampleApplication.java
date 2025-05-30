@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PhTestApplication {
+public class SpringSecuritySampleApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(PhTestApplication.class, args);
+        SpringApplication.run(SpringSecuritySampleApplication.class, args);
     }
 
 }
