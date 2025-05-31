@@ -41,8 +41,7 @@ public class UserService {
         // vo create
         User user = User.builder()
                 .userName(reqDto.getName())
-                .mobile(reqDto.getMobile())
-                .password(passwordEncoder.encode(reqDto.getPassword()))
+                .userPassword(passwordEncoder.encode(reqDto.getPassword()))
                 .build();
         // insert
         this.userMapper.insertUser(user);
