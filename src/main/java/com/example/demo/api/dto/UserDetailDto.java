@@ -1,6 +1,6 @@
-package com.example.demo.api.user.dto;
+package com.example.demo.api.dto;
 
-import com.example.demo.api.user.entity.User;
+import com.example.demo.api.entity.user.User;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;

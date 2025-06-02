@@ -1,14 +1,12 @@
 package com.example.demo.config.component;
 
-import com.example.demo.api.user.dto.UserDetailDto;
-import com.example.demo.api.user.dto.UserDto;
+import com.example.demo.api.dto.UserDetailDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.example.demo.api.user.entity.User;
+import com.example.demo.api.entity.user.User;
 import com.example.demo.common.enumulation.ResponseCode;
 import com.example.demo.config.exception.TokenAuthenticationException;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.DecodingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

@@ -3,7 +3,7 @@ package com.example.demo.config.filter;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.example.demo.api.user.entity.User;
+import com.example.demo.api.entity.user.User;
 import com.example.demo.common.enumulation.ResponseCode;
 import com.example.demo.config.exception.InternalServerException;
 import jakarta.servlet.http.HttpServletRequest;

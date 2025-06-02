@@ -1,6 +1,6 @@
 package com.example.demo.common.util;
 
-import com.example.demo.api.user.entity.User;
+import com.example.demo.api.entity.user.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;

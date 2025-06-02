@@ -1,9 +1,9 @@
-package com.example.demo.api.user.service;
+package com.example.demo.api.service;
 
-import com.example.demo.api.user.dto.UserDto;
-import com.example.demo.api.user.dto.SignupReqDto;
-import com.example.demo.api.user.mapper.UserMapper;
-import com.example.demo.api.user.entity.User;
+import com.example.demo.api.dto.UserDto;
+import com.example.demo.api.dto.SignupReqDto;
+import com.example.demo.api.mapper.UserMapper;
+import com.example.demo.api.entity.user.User;
 import com.example.demo.common.enumulation.ResponseCode;
 import com.example.demo.config.exception.DataConflictException;
 import lombok.RequiredArgsConstructor;

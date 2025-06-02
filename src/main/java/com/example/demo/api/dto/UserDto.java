@@ -1,4 +1,4 @@
-package com.example.demo.api.user.dto;
+package com.example.demo.api.dto;
 
 
 import lombok.*;

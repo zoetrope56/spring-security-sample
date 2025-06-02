@@ -1,8 +1,8 @@
-package com.example.demo.api.user.controller;
+package com.example.demo.api.controller;
 
-import com.example.demo.api.user.dto.SignupReqDto;
-import com.example.demo.api.user.dto.UserDto;
-import com.example.demo.api.user.service.UserService;
+import com.example.demo.api.dto.SignupReqDto;
+import com.example.demo.api.dto.UserDto;
+import com.example.demo.api.service.UserService;
 import com.example.demo.common.enumulation.ResponseCode;
 import com.example.demo.common.dto.Response;
 import com.example.demo.config.exception.ValidationException;
