@@ -10,7 +10,7 @@ public interface UserMapper {
 
     User selectUserById(Long userId);
 
-    User selectUserByName(String username);
+    Optional<User> selectUserByName(String username);
 
     Optional<User> selectUserByPhone(String phoneNum);
 

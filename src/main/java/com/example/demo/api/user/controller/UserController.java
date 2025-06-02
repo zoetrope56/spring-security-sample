@@ -1,6 +1,5 @@
 package com.example.demo.api.user.controller;
 
-import com.example.demo.api.user.dto.LoginReqDto;
 import com.example.demo.api.user.dto.SignupReqDto;
 import com.example.demo.api.user.dto.UserDto;
 import com.example.demo.api.user.service.UserService;

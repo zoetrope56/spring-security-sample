@@ -1,14 +1,14 @@
 package com.example.demo.config.component;
 
 import com.example.demo.api.user.dto.UserDetailDto;
+import com.example.demo.api.user.dto.UserDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.demo.api.user.entity.User;
 import com.example.demo.common.enumulation.ResponseCode;
 import com.example.demo.config.exception.TokenAuthenticationException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.DecodingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -72,7 +72,7 @@ public class JwtTokenProvider {
         final var jwtBuilder =
                 Jwts.builder()
                         .signWith(keySpec)
-                        .setSubject("spring-security-test:" + user.getUserNo())
+                        .setSubject("spring-security-test:" + user.getUserSeq())
                         .setExpiration(expirationDate)
                         .setHeader(header)
                         .setClaims(claimsMap);
