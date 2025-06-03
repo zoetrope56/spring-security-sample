@@ -4,12 +4,16 @@ import com.example.demo.api.entity.user.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +25,7 @@ import java.util.Map;
 @Component
 public class TokenUtils {
 
+    private static SecretKey JWT_SECRET_KEY;
 
     private static final String jwtSecretKey = "thisIsASecretKeyUsedForJwtTokenGenerationAndItIsLongEnoughToMeetTheRequirementOf256Bits";
     // jwt SecretKey 를 바이트 배열로 변환 -> HMAC-SHA256 알고리즘에 사용할 키 생성
@@ -29,6 +34,15 @@ public class TokenUtils {
     private static final String ALGORITHM = "HS256";
     private static final String LOGIN_ID = "loginId";
     private static final String USERNAME = "username";
+
+    /**
+     * JWT_SECRET_KEY 변수값에 환경 변수에서 불러온 SECRET_KEY를 주입합니다.
+     *
+     * @param jwtSecretKey
+     */
+    public TokenUtils(@Value("${jwt.secret}") String jwtSecretKey) {
+        TokenUtils.JWT_SECRET_KEY = Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
+    }
 
 
     /**
@@ -78,22 +92,24 @@ public class TokenUtils {
      * @return Date
      */
     private static Date createExpiredDate() {
-        // 토큰의 만료기간은 8시간으로 지정
-        Instant now = Instant.now();
-        Instant expiryDate = now.plus(Duration.ofHours(8));
-        return Date.from(expiryDate);
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.HOUR, 1);             // 1시간
+        return c.getTime();
     }
 
     /**
      * JWT의 헤더값을 생성해주는 메서드
      */
     private static Map<String, Object> createHeader() {
-        Map<String, Object> header = new HashMap<>();
-
-        header.put("typ", JWT_TYPE);
-        header.put("alg", ALGORITHM);
+        val header = new HashMap<String, Object>();
+        header.put("typ", "JWT");
+        header.put("alg", "HS256");
         header.put("regDate", System.currentTimeMillis());
-        return header;
+
+        return Jwts.header()
+                .
+                .add("alg", "HS256")
+                .add("regDate", System.currentTimeMillis()).build();
     }
 
     /**

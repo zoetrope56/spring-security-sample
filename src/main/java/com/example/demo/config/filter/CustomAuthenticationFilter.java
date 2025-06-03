@@ -50,7 +50,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             User user = objectMapper.readValue(request.getInputStream(), User.class);
             log.debug("1.CustomAuthenticationFilter :: loginId: " + user.getUserId());
 
-            /**
+            /*
              * ID, PW를 기반으로 UsernamePasswordAuthenticationToken 토큰을 발급한다.
              * UsernamePasswordAuthenticationToken 객체가 처음 생성될 때 authenticated 필드는 기본적으로 false로 설정된다.
              */

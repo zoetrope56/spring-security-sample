@@ -13,7 +13,7 @@ public enum ResponseCode {
 
     // 200
     OK_SUCCESS(200, "성공입니다."),
-//    REFRESH_TOKEN_SUCCESS(200, "토큰 갱신 성공입니다."),
+    REFRESH_TOKEN_SUCCESS(200, "토큰 갱신 성공입니다."),
 
     /**
      * Error Result Code
@@ -32,15 +32,15 @@ public enum ResponseCode {
     UNAUTHORIZED_EXPIRED_TOKEN(401, "토큰이 만료되었습니다. 다시 로그인 해주세요."),
 
     // 403 Forbidden
-//    FORBIDDEN_FILE_TYPE(403, "허용되지 않은 파일 형식입니다."),
-//    FORBIDDEN_FILE_NAME(403, "허용되지 않은 파일 이름입니다."),
+    FORBIDDEN_FILE_TYPE(403, "허용되지 않은 파일 형식입니다."),
+    FORBIDDEN_FILE_NAME(403, "허용되지 않은 파일 이름입니다."),
 
     // 404 Not Found
     NOT_FOUND_DATA(404, "조회된 정보가 없습니다."),
     NOT_FOUND_DELETE_DATA(404, "삭제할 정보가 없습니다."),
     NOT_FOUNT_MATCH_PASSWORD(404, "비밀번호가 일치하지 않습니다."),
 
-    // 405 Method Not Allowed
+    // 405 Not Allowed
     METHOD_NOT_ALLOWED_ERROR(405, "지원하지 않는 메소드 입니다."),
 
     // 406 Not Acceptable
