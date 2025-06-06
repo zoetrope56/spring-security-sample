@@ -1,22 +1,18 @@
 package com.example.demo.common.util;
 
-import com.example.demo.api.entity.user.User;
+import com.example.demo.api.dto.UserDto;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * JWT 관련 토큰 Util
@@ -25,129 +21,115 @@ import java.util.Map;
 @Component
 public class TokenUtils {
 
-    private static SecretKey JWT_SECRET_KEY;
+    private static Key secretKey;
 
-    private static final String jwtSecretKey = "thisIsASecretKeyUsedForJwtTokenGenerationAndItIsLongEnoughToMeetTheRequirementOf256Bits";
-    // jwt SecretKey 를 바이트 배열로 변환 -> HMAC-SHA256 알고리즘에 사용할 키 생성
-    private static final Key key = Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
-    private static final String JWT_TYPE = "JWT";
-    private static final String ALGORITHM = "HS256";
-    private static final String LOGIN_ID = "loginId";
-    private static final String USERNAME = "username";
+    // 인증토큰 생성 시 적용할 토큰 만료시간 (accessToken)
+    @Value("${auth.jwt.accessToken-expiration-time}") // 기본값 30분
+    private String expirationTime;
+
+    // 인증토큰 생성 시 적용할 토큰 만료시간 (refreshToken)
+    @Value("${auth.jwt.refreshToken-expiration-time}") // 기본값 14일
+    private String refreshExpirationTime;
 
     /**
-     * JWT_SECRET_KEY 변수값에 환경 변수에서 불러온 SECRET_KEY를 주입합니다.
+     * secretKey 변수값에 환경 변수에서 불러온 SECRET_KEY를 주입합니다.
      *
-     * @param jwtSecretKey
+     * @param jwtSecretKey JWT 환경 변수
      */
-    public TokenUtils(@Value("${jwt.secret}") String jwtSecretKey) {
-        TokenUtils.JWT_SECRET_KEY = Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
-    }
-
-
-    /**
-     * 사용자 pk를 기준으로 JWT 토큰을 발급하여 반환해 준다.
-     */
-    public static String generateJwtToken(User user) {
-
-        JwtBuilder builder = Jwts.builder()
-                .signWith(key)
-                .setHeader(createHeader())                          // Header 구성
-                .setClaims(createClaims(user))                    // Payload - Claims 구성
-                .setSubject(String.valueOf(user.getUserId()))     // Payload - Subjects 구성
-                .setIssuer("profile")                               // Issuer 구성
-//                .signWith(key, SignatureAlgorithm.HS256)          // Signature 구성 : 이 키를 사용하여 JWT 토큰에 서명을 추가한다. 이 서명은 토큰의 무결성을 보장하는 데 사용된다.
-                .setExpiration(createExpiredDate());                // Expired Date 구성
-
-        return builder.compact();
+    public TokenUtils(@Value("${auth.jwt.secret-key}") String jwtSecretKey) {
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecretKey);
+        secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
     /**
-     * 토큰을 기반으로 사용자의 정보를 반환해주는 메서드
+     * token 생성
+     *
+     * @param userDto token 생성 시 참고할 사용자 정보
+     * @return access token
      */
-    public static boolean isValidToken(String token) {
+    public String generateToken(UserDto userDto) {
+        val expirationDate = new Date(System.currentTimeMillis() + Long.parseLong(this.expirationTime));
+
+        // payload
+        val claimsMap = new HashMap<String, Object>();
+        claimsMap.put("userId", userDto.getUserId());
+        claimsMap.put("userName", userDto.getUserName());
+        claimsMap.put("userGrant", userDto.getUserGrant());
+
+        return Jwts.builder()
+                .setSubject("accessToken:" + userDto.getUserSeq())
+                .setClaims(claimsMap)
+                .setExpiration(expirationDate)
+                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    /**
+     * refresh token 생성
+     *
+     * @param userDto token 생성 시 참고할 사용자 정보
+     * @return refresh token
+     */
+    public String generateRefreshToken(UserDto userDto) {
+        val refreshExpirationDate = new Date(System.currentTimeMillis() + Long.parseLong(this.refreshExpirationTime));
+
+        return Jwts.builder()
+                .setSubject("refreshToken:" + userDto.getUserSeq())
+                .setExpiration(refreshExpirationDate)
+                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    /**
+     * @param token 토큰
+     * @return 토큰 유효 여부 반환
+     */
+    public boolean isValidToken(String token) {
         try {
-            Claims claims = getClaimsFormToken(token);
-
-            log.info("expireTime : " + claims.getExpiration());
-            log.info("loginId : " + claims.get(LOGIN_ID));
-            log.info("username : " + claims.get(USERNAME));
-
             return true;
-        } catch (ExpiredJwtException expiredJwtException) {
-            log.error("Token Expired", expiredJwtException);
-            return false;
-        } catch (JwtException jwtException) {
-            log.error("Token Tampered", jwtException);
-            return false;
-        } catch (NullPointerException npe) {
-            log.error("Token is null", npe);
-            return false;
+        } catch (SecurityException | MalformedJwtException | DecodingException e) {
+            log.warn("Invalid JWT Token", e);
+        } catch (ExpiredJwtException e) {
+            log.warn("Expired JWT Token", e);
+        } catch (UnsupportedJwtException e) {
+            log.warn("Unsupported JWT Token", e);
+        } catch (IllegalArgumentException e) {
+            log.warn("JWT claims string is empty.", e);
+        } catch (Exception e) {
+            log.error("Unhandled JWT exception", e);
         }
+        return false;
     }
 
+
     /**
-     * 토큰의 만료기간을 지정하는 함수
+     * 'Claims' 내에서 '사용자 아이디'를 반환하는 메서드
      *
-     * @return Date
-     */
-    private static Date createExpiredDate() {
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.HOUR, 1);             // 1시간
-        return c.getTime();
-    }
-
-    /**
-     * JWT의 헤더값을 생성해주는 메서드
-     */
-    private static Map<String, Object> createHeader() {
-        val header = new HashMap<String, Object>();
-        header.put("typ", "JWT");
-        header.put("alg", "HS256");
-        header.put("regDate", System.currentTimeMillis());
-
-        return Jwts.header()
-                .
-                .add("alg", "HS256")
-                .add("regDate", System.currentTimeMillis()).build();
-    }
-
-    /**
-     * 사용자 정보를 기반으로 클래임을 생성해주는 메서드
-     *
-     * @param user 사용자 정보
-     * @return Map<String, Object>
-     */
-    private static Map<String, Object> createClaims(User user) {
-        // 공개 클래임에 사용자의 이름과 이메일을 설정해서 정보를 조회할 수 있다.
-        Map<String, Object> claims = new HashMap<>();
-
-        log.info("loginId : " + user.getUserId());
-        log.info("username : " + user.getUserName());
-
-        claims.put(LOGIN_ID, user.getUserId());
-        claims.put(USERNAME, user.getUserName());
-        return claims;
-    }
-
-    /**
-     * 토큰 정보를 기반으로 Claims 정보를 반환받는 메서드
-     *
-     * @return Claims : Claims
-     */
-    private static Claims getClaimsFormToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key)
-                .build().parseClaimsJws(token).getBody();
-    }
-
-    /**
-     * 토큰을 기반으로 사용자 정보를 반환받는 메서드
-     *
+     * @param token : 토큰
      * @return String : 사용자 아이디
      */
-    public static String getUserIdFromToken(String token) {
-        Claims claims = getClaimsFormToken(token);
-        return claims.get(LOGIN_ID).toString();
+    public String getUserIdFromToken(String token) {
+        return parseClaims(token)
+                .get("userId").toString();
+    }
+
+
+    /**
+     * 'JWT' 내에서 'Claims' 정보를 반환하는 메서드
+     *
+     * @param token : 토큰
+     * @return Claims : Claims
+     */
+    private Claims parseClaims(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
     }
 
 }

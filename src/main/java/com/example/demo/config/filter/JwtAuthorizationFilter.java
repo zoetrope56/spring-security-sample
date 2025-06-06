@@ -27,6 +27,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
+    private final TokenUtils tokenUtils;
+
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -64,10 +66,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             // 쿠키 내에 토큰이 존재하는 경우
             if (token != null && !token.equalsIgnoreCase("")) {
                 //  쿠키 내에있는 토큰이 유효한지 여부를 체크한다.
-                if (TokenUtils.isValidToken(token)) {
+                if (tokenUtils.isValidToken(token)) {
                     // 추출한 토큰을 기반으로 사용자 아이디를 반환받는다.
-                    String loginId = TokenUtils.getUserIdFromToken(token);
-                    log.debug("[+] loginId Check: " + loginId);
+                    String loginId = tokenUtils.getUserIdFromToken(token);
+                    log.debug("[+] loginId Check: {}", loginId);
 
                     //  사용자 아이디가 존재하는지에 대한 여부를 체크한다.
                     if (loginId != null && !loginId.equalsIgnoreCase("")) {
