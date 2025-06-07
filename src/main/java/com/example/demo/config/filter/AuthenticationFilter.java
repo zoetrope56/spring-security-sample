@@ -17,9 +17,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Slf4j
-public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public AuthenticationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
     }
 
@@ -48,7 +48,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
 
             User user = objectMapper.readValue(request.getInputStream(), User.class);
-            log.debug("1.CustomAuthenticationFilter :: loginId: " + user.getUserId());
+            log.debug("AuthenticationFilter :: loginId: {}", user.getUserId());
 
             /*
              * ID, PW를 기반으로 UsernamePasswordAuthenticationToken 토큰을 발급한다.

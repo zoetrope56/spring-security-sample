@@ -1,7 +1,8 @@
 package com.example.demo.config.filter;
 
+import com.example.demo.api.mapper.UserMapper;
 import com.example.demo.common.enumulation.ResponseCode;
-import com.example.demo.common.util.TokenUtils;
+import com.example.demo.config.component.JwtTokenProvider;
 import com.example.demo.config.exception.DataNotFoundException;
 import com.example.demo.config.exception.InternalServerException;
 import com.example.demo.config.exception.ValidationException;
@@ -10,27 +11,56 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-@RequiredArgsConstructor
-public class JwtAuthorizationFilter extends OncePerRequestFilter {
+public class AuthorizationFilter extends BasicAuthenticationFilter {
 
-    private final TokenUtils tokenUtils;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    private final UserDetailsService userDetailsService;
+    private final RedisTemplate redisTemplate;
 
+    private final UserMapper userMapper;
+
+    private final PasswordEncoder passwordEncoder;
+
+    /**
+     * 필터 생성자
+     *
+     * @param authenticationManager 인증 생성자
+     * @param jwtTokenProvider      JWT 처리 공통 provider
+     * @param redisTemplate         redisTemplate
+     * @param userMapper            userMapper
+     * @param passwordEncoder       passwordEncoder
+     */
+    public AuthorizationFilter(final AuthenticationManager authenticationManager, final JwtTokenProvider jwtTokenProvider, RedisTemplate redisTemplate, RedisTemplate redisTemplate1, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+        super(authenticationManager);
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.redisTemplate = redisTemplate1;
+        this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    /**
+     *
+     * @param request
+     * @param response
+     * @param filterChain
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain)
             throws ServletException, IOException {
@@ -66,14 +96,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             // 쿠키 내에 토큰이 존재하는 경우
             if (token != null && !token.equalsIgnoreCase("")) {
                 //  쿠키 내에있는 토큰이 유효한지 여부를 체크한다.
-                if (tokenUtils.isValidToken(token)) {
+                if (jwtTokenProvider.isValidToken(token)) {
                     // 추출한 토큰을 기반으로 사용자 아이디를 반환받는다.
-                    String loginId = tokenUtils.getUserIdFromToken(token);
+                    String loginId = jwtTokenProvider.getUserIdFromToken(token);
                     log.debug("[+] loginId Check: {}", loginId);
 
                     //  사용자 아이디가 존재하는지에 대한 여부를 체크한다.
                     if (loginId != null && !loginId.equalsIgnoreCase("")) {
-                        UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
+                        UserDetails userDetails =
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                         filterChain.doFilter(request, response);

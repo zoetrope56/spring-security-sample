@@ -4,11 +4,11 @@ import com.example.demo.common.enumulation.ResponseCode;
 import lombok.Getter;
 
 @Getter
-public abstract class PhTestException extends RuntimeException {
+public abstract class SecurityTestException extends RuntimeException {
 
     private final ResponseCode responseCode;
 
-    public PhTestException(String message, ResponseCode responseCode) {
+    public SecurityTestException(String message, ResponseCode responseCode) {
         super(message);
         this.responseCode = responseCode;
     }

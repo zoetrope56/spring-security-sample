@@ -30,7 +30,7 @@ public class UserController {
      * @return 유저 정보
      */
     @GetMapping("/info")
-    public ResponseEntity<Response<UserDto>> getUserInfo(Long userId) {
+    public ResponseEntity<Response<UserDto>> getUserInfo(String userId) {
         // TODO Deprecated
         return Response.success(ResponseCode.OK_SUCCESS, userService.getUserInfo(userId));
     }

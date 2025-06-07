@@ -1,157 +1,136 @@
 package com.example.demo.config.component;
 
-import com.example.demo.api.dto.UserDetailDto;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.example.demo.api.entity.user.User;
-import com.example.demo.common.enumulation.ResponseCode;
-import com.example.demo.config.exception.TokenAuthenticationException;
+import com.example.demo.api.dto.UserDto;
 import io.jsonwebtoken.*;
-import lombok.RequiredArgsConstructor;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.io.DecodingException;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
-import java.util.Date;
-import java.util.HashMap;
+import java.security.Key;
+import java.util.*;
 
+/**
+ * JWT 관련 토큰 Util
+ */
 @Slf4j
-@RequiredArgsConstructor
+@Component
 public class JwtTokenProvider {
 
-    private static final String TOKEN_BODY_INFO_KEY = "info";
+    private static Key secretKey;
 
-    // 인증토큰 secret key
-    @Value("${auth.token.jwt.secret-key}")
-    private String secretKey;
-
-    // 인증토큰 생성 시 적용할 토큰 만료시간 (기본값 30분)
-    @Value("${auth.token.jwt.expiration-time}")
+    // 인증토큰 생성 시 적용할 토큰 만료시간 (accessToken)
+    @Value("${auth.jwt.accessToken-expiration-time}") // 기본값 30분
     private String expirationTime;
 
-    // 인증토큰 생성 시 적용할 토큰 만료시간 (refresh) (기본값 14일)
-    @Value("${auth.token.jwt.refresh-expiration-time}")
+    // 인증토큰 생성 시 적용할 토큰 만료시간 (refreshToken)
+    @Value("${auth.jwt.refreshToken-expiration-time}") // 기본값 14일
     private String refreshExpirationTime;
 
-    private final ObjectMapper objectMapper;
+    /**
+     * secretKey 변수값에 환경 변수에서 불러온 SECRET_KEY를 주입합니다.
+     *
+     * @param jwtSecretKey JWT 환경 변수
+     */
+    public JwtTokenProvider(@Value("${auth.jwt.secret-key}") String jwtSecretKey) {
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecretKey);
+        secretKey = Keys.hmacShaKeyFor(keyBytes);
+    }
 
     /**
-     * 인증 토큰 생성
+     * token 생성
      *
-     * @param user 사용자 정보
-     * @return 인증 토큰
+     * @param userDto token 생성 시 참고할 사용자 정보
+     * @return access token
      */
-    public String generateToken(User user) {
-        // 만료일
-        final var expirationDate = new Date(System.currentTimeMillis() + Long.parseLong(this.expirationTime));
+    public String generateToken(UserDto userDto) {
+        val expirationDate = new Date(System.currentTimeMillis() + Long.parseLong(this.expirationTime));
 
-        // 토큰 header
-        final var header = new HashMap<String, Object>();
-        header.put("typ", "JWT");
-        header.put("alg", SignatureAlgorithm.HS256.getValue());
-        header.put("regDate", System.currentTimeMillis());
+        // payload
+        val claimsMap = new HashMap<String, Object>();
+        claimsMap.put("userId", userDto.getUserId());
+        claimsMap.put("userName", userDto.getUserName());
+        claimsMap.put("userGrant", userDto.getUserGrant());
 
-        // 토큰 body
-        final var claimsMap = new HashMap<String, Object>();
-        try {
-            claimsMap.put(TOKEN_BODY_INFO_KEY, this.objectMapper.writeValueAsString(user));
-        } catch (JsonProcessingException e) {
-            if (log.isErrorEnabled()) {
-                log.error("토큰 생성 오류 사용자 정보 --> {}", user);
-                log.error(e.getMessage(), e);
-            }
-            throw new TokenAuthenticationException(ResponseCode.UNAUTHORIZED_INVALID_TOKEN.getMessage());
-        }
-
-        // 암호화 key spec
-        final var keySpec = new SecretKeySpec(DatatypeConverter.parseBase64Binary(this.secretKey), SignatureAlgorithm.HS256.getJcaName());
-        final var jwtBuilder =
-                Jwts.builder()
-                        .signWith(keySpec)
-                        .setSubject("spring-security-test:" + user.getUserSeq())
-                        .setExpiration(expirationDate)
-                        .setHeader(header)
-                        .setClaims(claimsMap);
-
-        if (log.isDebugEnabled()) log.info("JWT token  :::::: {}", jwtBuilder);
-        return jwtBuilder.compact();
+        return Jwts.builder()
+                .setSubject("accessToken:" + userDto.getUserSeq())
+                .setClaims(claimsMap)
+                .setExpiration(expirationDate)
+                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .compact();
     }
 
     /**
      * refresh token 생성
      *
+     * @param userDto token 생성 시 참고할 사용자 정보
      * @return refresh token
      */
-    public String generateRefreshToken() {
-        // 만료일
-        final var expirationDate = new Date(System.currentTimeMillis() + Long.parseLong(this.refreshExpirationTime));
+    public String generateRefreshToken(UserDto userDto) {
+        val refreshExpirationDate = new Date(System.currentTimeMillis() + Long.parseLong(this.refreshExpirationTime));
 
-        // 토큰 header
-        final var header = new HashMap<String, Object>();
-        header.put("typ", "JWT");
-        header.put("alg", SignatureAlgorithm.HS256.getValue());
-        header.put("regDate", System.currentTimeMillis());
-
-        // 암호화 key spec
-        final var keySpec = new SecretKeySpec(DatatypeConverter.parseBase64Binary(this.secretKey), SignatureAlgorithm.HS256.getJcaName());
-        final var jwtBuilder =
-                Jwts.builder()
-                        .signWith(keySpec)
-                        .setSubject("payhere-test:refresh-token")
-                        .setExpiration(expirationDate)
-                        .setHeader(header);
-
-        if (log.isDebugEnabled()) log.info("JWT refresh token  :::::: {}", jwtBuilder);
-        return jwtBuilder.compact();
+        return Jwts.builder()
+                .setSubject("refreshToken:" + userDto.getUserSeq())
+                .setExpiration(refreshExpirationDate)
+                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .compact();
     }
 
     /**
-     * 인증 토큰 검사
-     *
-     * @param token 인증 토큰
-     * @return 검사 결과 (성공 시 사용자 정보 반환)
+     * @param token 토큰
+     * @return 토큰 유효 여부 반환
      */
-    public UserDetailDto validateToken(String token) {
-        final Claims claims =
-                Jwts.parserBuilder()
-                        .setSigningKey(DatatypeConverter.parseBase64Binary(this.secretKey))
-                        .build()
-                        .parseClaimsJws(token)
-                        .getBody();
-
-        if (log.isDebugEnabled()) {
-            log.debug(claims.toString());
-        }
-
+    public boolean isValidToken(String token) {
         try {
-            final var infoString = (String) claims.get(TOKEN_BODY_INFO_KEY);
-            if (StringUtils.isNotBlank(infoString)) {
-                final var user = this.objectMapper.readValue(infoString, User.class);
-
-                return new UserDetailDto(user);
-            } else {
-                throw new TokenAuthenticationException("유효한 토큰이 아닙니다.");
-            }
+            return true;
+        } catch (SecurityException | MalformedJwtException | DecodingException e) {
+            log.warn("Invalid JWT Token", e);
+        } catch (ExpiredJwtException e) {
+            log.warn("Expired JWT Token", e);
+        } catch (UnsupportedJwtException e) {
+            log.warn("Unsupported JWT Token", e);
+        } catch (IllegalArgumentException e) {
+            log.warn("JWT claims string is empty.", e);
         } catch (Exception e) {
-            if (log.isErrorEnabled()) {
-                log.error("인증 토큰 오류 발생. token --> {}", token);
-                log.error(e.getMessage(), e);
-            }
-            throw new TokenAuthenticationException("유효한 토큰이 아닙니다.");
+            log.error("Unhandled JWT exception", e);
+        }
+        return false;
+    }
+
+
+    /**
+     * 'Claims' 내에서 '사용자 아이디'를 반환하는 메서드
+     *
+     * @param token : 토큰
+     * @return String : 사용자 아이디
+     */
+    public String getUserIdFromToken(String token) {
+        return parseClaims(token)
+                .get("userId").toString();
+    }
+
+
+    /**
+     * 'JWT' 내에서 'Claims' 정보를 반환하는 메서드
+     *
+     * @param token : 토큰
+     * @return Claims : Claims
+     */
+    private Claims parseClaims(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
         }
     }
 
-    /**
-     * refresh token 유효성 검사.
-     *
-     * @param token refresh token
-     */
-    public void validateRefreshToken(String token) {
-        Jwts.parserBuilder()
-                .setSigningKey(DatatypeConverter.parseBase64Binary(this.secretKey))
-                .build()
-                .parseClaimsJws(token);
-    }
 }
+

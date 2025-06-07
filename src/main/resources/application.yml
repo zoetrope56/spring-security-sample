@@ -1,3 +1,4 @@
+
 spring:
   profiles:
     group:
@@ -26,7 +27,7 @@ server:
     context-path: '/api/v1'
 
 springdoc:
-  packages-to-scan: com.payhere.phtest.api.controller
+  packages-to-scan: com.example.demo.api.controller
   default-consumes-media-type: application/json;charset=UTF-8
   default-produces-media-type: application/json;charset=UTF-8
   swagger-ui:
@@ -52,7 +53,7 @@ spring:
       on-profile: local
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/payhere_test?useSSL=false&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/signup_sample?useSSL=false&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
     username: root
     password: 12345678
   mvc:
@@ -79,7 +80,7 @@ spring:
       on-profile: dev
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/payhere_test?useSSL=false&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/signup_sample?useSSL=false&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
     username: root
     password: 12345678
   mvc:
@@ -92,10 +93,11 @@ spring:
     generate-ddl: false
     #    show-sql: true
 auth:
-  jwt:
-    secret-key: payheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthost
-    accessToken-expiration-time: 1800000
-    refreshToken-expiration-time: 1209600000
+  token:
+    jwt:
+      secret-key: payheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthost
+      expiration-time: 1800000
+      refresh-expiration-time: 1209600000
 
 ---
 spring:
@@ -104,7 +106,7 @@ spring:
       on-profile: prd
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://3.35.22.96:3306/payhere_test?useSSL=false&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://3.35.22.96:3306/signup_sample?useSSL=false&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
     username: zoetrope
     password: Ztlog1234!@#$
   mvc:
@@ -117,7 +119,8 @@ spring:
     generate-ddl: false
     #    show-sql: true
 auth:
-  jwt:
-    secret-key: payheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthost
-    accessToken-expiration-time: 1800000
-    refreshToken-expiration-time: 1209600000
+  token:
+    jwt:
+      secret-key: payheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthostpayheretesthost
+      expiration-time: 1800000
+      refresh-expiration-time: 1209600000

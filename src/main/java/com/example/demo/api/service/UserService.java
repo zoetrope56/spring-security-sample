@@ -21,7 +21,7 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserDto getUserInfo(Long userId) {
+    public UserDto getUserInfo(String userId) {
         final var userVo = userMapper.selectUserById(userId);
         UserDto userDto = UserDto.builder().build();
         BeanUtils.copyProperties(userVo, userDto);
