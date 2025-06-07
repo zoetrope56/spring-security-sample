@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,7 +41,7 @@ public class SecurityConfig {
                 .logout(logout -> logout.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()) // 우선 모든 요청에
-                .apply(authConfig);
+                .with(authConfig, Customizer.withDefaults());
         return http.build();
     }
 
