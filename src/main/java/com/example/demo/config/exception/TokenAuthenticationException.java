@@ -2,7 +2,7 @@ package com.example.demo.config.exception;
 
 import com.example.demo.common.enumulation.ResponseCode;
 
-public class TokenAuthenticationException extends SecurityTestException {
+public class TokenAuthenticationException extends SecuritySampleException {
 
     public TokenAuthenticationException(String message, ResponseCode responseCode) {
         super(message, responseCode);

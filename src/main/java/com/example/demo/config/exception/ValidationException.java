@@ -2,7 +2,7 @@ package com.example.demo.config.exception;
 
 import com.example.demo.common.enumulation.ResponseCode;
 
-public class ValidationException extends SecurityTestException {
+public class ValidationException extends SecuritySampleException {
 
 	public ValidationException(String message, ResponseCode code) {
 		super(message, code);

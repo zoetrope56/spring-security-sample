@@ -2,7 +2,7 @@ package com.example.demo.config.exception;
 
 import com.example.demo.common.enumulation.ResponseCode;
 
-public class DataConflictException extends SecurityTestException {
+public class DataConflictException extends SecuritySampleException {
 
     public DataConflictException(String message, ResponseCode code) {
         super(message, code);

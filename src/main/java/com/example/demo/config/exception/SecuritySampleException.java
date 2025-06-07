@@ -4,11 +4,11 @@ import com.example.demo.common.enumulation.ResponseCode;
 import lombok.Getter;
 
 @Getter
-public abstract class SecurityTestException extends RuntimeException {
+public abstract class SecuritySampleException extends RuntimeException {
 
     private final ResponseCode responseCode;
 
-    public SecurityTestException(String message, ResponseCode responseCode) {
+    public SecuritySampleException(String message, ResponseCode responseCode) {
         super(message);
         this.responseCode = responseCode;
     }

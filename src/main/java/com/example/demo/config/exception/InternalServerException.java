@@ -2,7 +2,7 @@ package com.example.demo.config.exception;
 
 import com.example.demo.common.enumulation.ResponseCode;
 
-public class InternalServerException extends SecurityTestException {
+public class InternalServerException extends SecuritySampleException {
 
 	public InternalServerException(String message, ResponseCode code) {
 		super(message, code);

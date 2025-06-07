@@ -1,6 +1,9 @@
 package com.example.demo.config.component;
 
+import com.example.demo.api.dto.UserDetailDto;
 import com.example.demo.api.dto.UserDto;
+import com.example.demo.api.entity.user.User;
+import com.example.demo.common.enumulation.UserGrant;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.DecodingException;
@@ -49,7 +52,6 @@ public class JwtTokenProvider {
      */
     public String generateToken(UserDto userDto) {
         val expirationDate = new Date(System.currentTimeMillis() + Long.parseLong(this.expirationTime));
-
         // payload
         val claimsMap = new HashMap<String, Object>();
         claimsMap.put("userId", userDto.getUserId());
@@ -109,8 +111,7 @@ public class JwtTokenProvider {
      * @return String : 사용자 아이디
      */
     public String getUserIdFromToken(String token) {
-        return parseClaims(token)
-                .get("userId").toString();
+        return parseClaims(token).getUserId();
     }
 
 
@@ -120,16 +121,20 @@ public class JwtTokenProvider {
      * @param token : 토큰
      * @return Claims : Claims
      */
-    private Claims parseClaims(String token) {
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (ExpiredJwtException e) {
-            return e.getClaims();
-        }
+    public UserDetailDto parseClaims(String token) {
+        final Claims claims = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return new UserDetailDto(
+                User.builder()
+                        .userId(String.valueOf(claims.get("userId")))
+                        .userName(String.valueOf(claims.get("userName")))
+                        .userGrant(UserGrant.valueOf(String.valueOf(claims.get("userGrant"))))
+                        .build()
+        );
     }
 
 }
