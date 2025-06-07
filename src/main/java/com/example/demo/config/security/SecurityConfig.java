@@ -1,5 +1,6 @@
 package com.example.demo.config.security;
 
+import com.example.demo.config.AuthConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,7 +32,7 @@ public class SecurityConfig {
      * @throws Exception 공통 예외
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthConfig authConfig) throws Exception {
         http
                 .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 미사용 (JWT 사용)
@@ -39,7 +40,7 @@ public class SecurityConfig {
                 .logout(logout -> logout.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()) // 우선 모든 요청에
-        ;
+                .apply(authConfig);
         return http.build();
     }
 
