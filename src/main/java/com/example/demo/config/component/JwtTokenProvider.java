@@ -26,12 +26,10 @@ public class JwtTokenProvider {
 
     private static Key secretKey;
 
-    // 인증토큰 생성 시 적용할 토큰 만료시간 (accessToken)
-    @Value("${auth.jwt.accessToken-expiration-time}") // 기본값 30분
+    @Value("${auth.token.jwt.expiration-time}") // 인증토큰 생성 시 적용할 토큰 만료시간 (accessToken)
     private String expirationTime;
 
-    // 인증토큰 생성 시 적용할 토큰 만료시간 (refreshToken)
-    @Value("${auth.jwt.refreshToken-expiration-time}") // 기본값 14일
+    @Value("${auth.token.jwt.refresh-expiration-time}") // 인증토큰 생성 시 적용할 토큰 만료시간 (refreshToken)
     private String refreshExpirationTime;
 
     /**
@@ -39,7 +37,7 @@ public class JwtTokenProvider {
      *
      * @param jwtSecretKey JWT 환경 변수
      */
-    public JwtTokenProvider(@Value("${auth.jwt.secret-key}") String jwtSecretKey) {
+    public JwtTokenProvider(@Value("${auth.token.jwt.secret-key}") String jwtSecretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecretKey);
         secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
