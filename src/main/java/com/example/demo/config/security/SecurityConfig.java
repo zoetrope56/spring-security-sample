@@ -20,8 +20,8 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Slf4j
 @Configuration
-@EnableWebSecurity(debug = true)
-@EnableMethodSecurity(securedEnabled = true)
+@EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -34,8 +34,7 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthConfig authConfig) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
+        http.csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 미사용 (JWT 사용)
                 .formLogin(formLogin -> formLogin.disable())
                 .logout(logout -> logout.disable())
