@@ -1,5 +1,6 @@
 package com.example.demo.api.controller;
 
+import com.example.demo.api.dto.LoginReqDto;
 import com.example.demo.api.dto.SignupReqDto;
 import com.example.demo.api.dto.UserDto;
 import com.example.demo.api.service.UserService;
@@ -24,51 +25,28 @@ public class UserController {
 
     private final UserService userService;
 
-    /**
-     * 유저 정보 조회
-     *
-     * @return 유저 정보
-     */
-    @GetMapping("/info")
-    public ResponseEntity<Response<UserDto>> getUserInfo(String userId) {
-        // TODO Deprecated
-        return Response.success(ResponseCode.OK_SUCCESS, userService.getUserInfo(userId));
+    @PostMapping("/info")
+    @Operation(summary = "회원 정보 조회(가입 여부 확인)", description = "회원 정보 조회(가입 여부 확인)")
+    public ResponseEntity<Response<UserDto>> getUserInfo(@RequestBody @Valid UserDto reqDto) {
+        return Response.success(ResponseCode.OK_SUCCESS, userService.getUserInfo(reqDto));
     }
 
-    /**
-     * 회원가입하기
-     *
-     * @param reqDto 회원가입 요청 객체
-     * @return 성공 응답
-     */
     @PostMapping("/signup")
-    public ResponseEntity<Response<String>> signup(@RequestBody @Valid SignupReqDto reqDto, BindingResult errors) {
-        if (errors.hasErrors())
-            throw new ValidationException(ResponseCode.INVALID_DATA_ERROR.getMessage());
+    @Operation(summary = "회원 가입하기", description = "회원 가입하기")
+    public ResponseEntity<Response<String>> signup(@RequestBody @Valid SignupReqDto reqDto) {
         userService.signup(reqDto);
         return Response.success(ResponseCode.OK_SUCCESS);
     }
 
-    /**
-     * 로그인하기
-     *
-     * @param reqDto 로그인 요청 객체
-     * @return 성공 응답
-     */
-    @Operation(summary = "로그인하기", description = "로그인하기")
     @PostMapping("/login")
-    public ResponseEntity<Response<String>> login(@RequestBody SignupReqDto reqDto, HttpServletRequest request, HttpServletResponse response) {
+    @Operation(summary = "로그인하기", description = "로그인하기")
+    public ResponseEntity<Response<String>> login(@RequestBody LoginReqDto reqDto, HttpServletRequest request, HttpServletResponse response) {
         userService.login(reqDto);
         return Response.success(ResponseCode.OK_SUCCESS);
     }
 
-    /**
-     * 로그아웃 하기
-     *
-     * @return 성공 응답
-     */
-    @Operation(summary = "로그아웃하기", description = "로그아웃하기")
     @PostMapping("/logout")
+    @Operation(summary = "로그아웃하기", description = "로그아웃하기")
     public ResponseEntity<Response<String>> logout(BindingResult errors) {
         userService.logout();
         return Response.success(ResponseCode.OK_SUCCESS);
