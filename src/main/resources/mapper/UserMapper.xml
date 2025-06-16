@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.api.mapper.UserMapper">
-
-    <select id="selectUserById" resultType="com.example.demo.api.entity.user.User">
-        SELECT *
-        FROM user_mst
-        WHERE USER_ID = #{userId}
+    <select id="existsUserID" resultType="java.lang.Integer">
+        SELECT EXISTS(
+            SELECT *
+            FROM user_mst um
+            WHERE um.USER_ID = #{userId}
+        )
     </select>
 
-    <select id="selectUserByPhone" resultType="com.example.demo.api.entity.user.User">
+    <select id="selectUserById" parameterType="String" resultType="com.example.demo.api.entity.user.User">
         SELECT *
         FROM user_mst um
-        WHERE um.MOBILE = #{mobile}
+        WHERE um.USER_ID = #{userId}
     </select>
 
-    <select id="selectUserByName" resultType="com.example.demo.api.entity.user.User">
+    <select id="selectUserByName" parameterType="String" resultType="com.example.demo.api.entity.user.User">
         SELECT *
         FROM user_mst um
         WHERE um.MOBILE = #{userName}
     </select>
-
+    
     <insert id="insertUser" parameterType="com.example.demo.api.entity.user.User">
         INSERT INTO user_mst (
           USERNAME,
@@ -35,5 +36,29 @@
           NOW())
     </insert>
 
+    <update id="updateUserInfo" parameterType="com.example.demo.api.entity.user.User" useGeneratedKeys="true" keyColumn="userSeq" keyProperty="userSeq">
+        UPDATE user_mst
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null and !userId.equals('')">USER_ID = #{userId},</if>
+            <if test="userName != null and !userName.equals('')">USERNAME = #{userName},</if>
+            <if test="password != null and !password.equals('')">PASSWORD = F_AES_ENC{#{password}},</if>
+            <if test="userState != null and !userState.equals('')">USER_STATE = #{userState},</if>
+            <if test="userGrant != null and !userGrant.equals('')">USER_STATE = #{userGrant},</if>
+        </trim>
+        UPD_DTTM = NOW()
+        WHERE SEQ = #{userSeq}
+    </update>
+
+    <update id="changeUserPassword" parameterType="com.example.demo.api.entity.user.User">
+        UPDATE user_mst
+        SET PASSWORD = F_AES_ENC{#{password}}, UPD_DTTM = NOW()
+        WHERE USER_ID = #{userId}
+    </update>
+
+    <delete id="deleteUser" parameterType="com.example.demo.api.entity.user.User">
+        DELETE
+        FROM user_mst um
+        WHERE um.USER_ID = #{userId}
+    </delete>
 
 </mapper>

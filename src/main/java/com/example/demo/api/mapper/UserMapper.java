@@ -8,12 +8,17 @@ import java.util.Optional;
 @Mapper
 public interface UserMapper {
 
-    User selectUserById(String userId);
+    Integer existsUserID(String username);
+
+    Optional<User> selectUserById(String userId);
 
     Optional<User> selectUserByName(String username);
 
-    Optional<User> selectUserByPhone(String phoneNum);
+    Integer insertUser(User user);
 
-    void insertUser(User user);
+    Integer updateUserInfo(User user);
 
+    Integer changeUserPassword(User user);
+
+    Integer deleteUser(User user);
 }

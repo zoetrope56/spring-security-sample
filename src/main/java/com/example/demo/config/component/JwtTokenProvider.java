@@ -1,7 +1,6 @@
 package com.example.demo.config.component;
 
 import com.example.demo.api.dto.UserDetailDto;
-import com.example.demo.api.dto.UserDto;
 import com.example.demo.api.entity.user.User;
 import com.example.demo.common.enumulation.UserGrant;
 import io.jsonwebtoken.*;
@@ -45,19 +44,19 @@ public class JwtTokenProvider {
     /**
      * token 생성
      *
-     * @param userDto token 생성 시 참고할 사용자 정보
+     * @param user token 생성 시 참고할 사용자 정보
      * @return access token
      */
-    public String generateToken(UserDto userDto) {
+    public String generateToken(User user) {
         val expirationDate = new Date(System.currentTimeMillis() + Long.parseLong(this.expirationTime));
         // payload
         val claimsMap = new HashMap<String, Object>();
-        claimsMap.put("userId", userDto.getUserId());
-        claimsMap.put("userName", userDto.getUserName());
-        claimsMap.put("userGrant", userDto.getUserGrant());
+        claimsMap.put("userId", user.getUserId());
+        claimsMap.put("userName", user.getUserName());
+        claimsMap.put("userGrant", user.getUserGrant());
 
         return Jwts.builder()
-                .setSubject("accessToken:" + userDto.getUserSeq())
+                .setSubject("accessToken:" + user.getUserSeq())
                 .setClaims(claimsMap)
                 .setExpiration(expirationDate)
                 .signWith(secretKey, SignatureAlgorithm.HS512)
@@ -67,14 +66,14 @@ public class JwtTokenProvider {
     /**
      * refresh token 생성
      *
-     * @param userDto token 생성 시 참고할 사용자 정보
+     * @param user token 생성 시 참고할 사용자 정보
      * @return refresh token
      */
-    public String generateRefreshToken(UserDto userDto) {
+    public String generateRefreshToken(User user) {
         val refreshExpirationDate = new Date(System.currentTimeMillis() + Long.parseLong(this.refreshExpirationTime));
 
         return Jwts.builder()
-                .setSubject("refreshToken:" + userDto.getUserSeq())
+                .setSubject("refreshToken:" + user.getUserSeq())
                 .setExpiration(refreshExpirationDate)
                 .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
@@ -109,7 +108,7 @@ public class JwtTokenProvider {
      * @return String : 사용자 아이디
      */
     public String getUserIdFromToken(String token) {
-        return parseClaims(token).getUserId();
+        return parseClaims(token).user().getUserId();
     }
 
 

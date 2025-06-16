@@ -26,13 +26,13 @@ public class User extends BaseTimeEntity {
     private String userName;
 
     @Column(name = "PASSWORD", nullable = false)
-    private String userPassword;
+    private String password;
 
-    @Column(name = "GRANT", nullable = false)
+    @Column(name = "USER_GRANT", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserGrant userGrant;
 
-    @Column(name = "STATE", nullable = false)
+    @Column(name = "USER_STATE", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserState userState;
 

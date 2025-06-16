@@ -11,9 +11,15 @@ public enum UserGrant {
 
     // 권한
     ADMIN("ADMIN", "관리자"),
-    USER("USER", "사용자");
+    USER("USER", "사용자")
+    ;
 
-    private final String code;
-    private final String desc;
+    private String code;
+    private String desc;
+
+    UserGrant(String code, String desc) {
+        this.code = code;
+        this.desc = desc;
+    }
 
 }

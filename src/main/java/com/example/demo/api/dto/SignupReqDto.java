@@ -6,16 +6,10 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 @Getter
 @Setter
 @Schema(description = "회원가입 요청 dto")
-public class SignupReqDto implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 5598213430493995059L;
+public class SignupReqDto {
 
     @NotBlank(message = "회원 아이디가 없습니다.")
     @Schema(description = "회원 ID")

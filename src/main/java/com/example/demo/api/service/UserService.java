@@ -1,14 +1,15 @@
 package com.example.demo.api.service;
 
-import com.example.demo.api.dto.LoginReqDto;
-import com.example.demo.api.dto.UserDto;
+import com.example.demo.api.dto.UserInfoReqDto;
 import com.example.demo.api.dto.SignupReqDto;
 import com.example.demo.api.mapper.UserMapper;
 import com.example.demo.api.entity.user.User;
 import com.example.demo.common.enumulation.ResponseCode;
+import com.example.demo.common.enumulation.UserGrant;
 import com.example.demo.common.enumulation.UserState;
 import com.example.demo.config.exception.DataConflictException;
 import com.example.demo.config.exception.DataNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -26,45 +27,58 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * 회원 정보 반환 (가입 여부 확인)
+     * 회원정보 조회 (가입 여부 확인)
      *
      * @param reqDto 회원정보 요청 객체
-     * @return 회원 정보
+     * @return 회원정보
      */
-    public UserDto getUserInfo(UserDto reqDto) {
-        final var userVo = userMapper.selectUserById(reqDto.getUserId());
+    public UserInfoReqDto getUserInfo(@Valid UserInfoReqDto reqDto) {
+        final var user = userMapper.selectUserById(reqDto.getUserId());
         // userVo null check
-        if (ObjectUtils.isEmpty(userVo))
-            throw new DataNotFoundException(UserState.USER_NOT_FOUND.getDesc());
+        if (ObjectUtils.isEmpty(user))
+            throw new DataNotFoundException(ResponseCode.NOT_FOUND_DATA.getMessage());
 
-        UserDto userDto = UserDto.builder().build();
-        BeanUtils.copyProperties(userVo, userDto);
-        return userDto;
+        UserInfoReqDto infoDto = UserInfoReqDto.builder().build();
+        BeanUtils.copyProperties(user, infoDto);
+        return infoDto;
     }
 
     /**
-     * 회원 가입하기
+     * 회원정보 수정
+     *
+     * @param reqDto 회원정보 수정요청 객체
+     */
+    public void updateUserInfo(UserInfoReqDto reqDto) {
+
+        // user seq 찾아서 해당 컬럼으로 조회 후 업데이트
+
+        // ID 중복 체크
+        if (reqDto.getUserId() != null) {
+            if (userMapper.existsUserID(reqDto.getUserId()) != 0)
+                throw new DataConflictException("이미 존재하는 ID 입니다.", ResponseCode.CONFLICT_DATA_ERROR);
+        }
+
+    }
+
+    /**
+     * 회원가입
      *
      * @param reqDto 회원가입 요청 객체
      */
     public void signup(SignupReqDto reqDto) {
-        // 연락처 중복 체크
-        if (userMapper.selectUserByName(reqDto.getUsername()).isPresent())
-            throw new DataConflictException(ResponseCode.CONFLICT_USER_ERROR.getMessage());
+        // ID 중복 체크
+        if (userMapper.existsUserID(reqDto.getUserId()) != 0)
+            throw new DataConflictException("이미 존재하는 ID 입니다.", ResponseCode.CONFLICT_DATA_ERROR);
 
         // vo create
         User user = User.builder()
+                .userId(reqDto.getUserId())
                 .userName(reqDto.getUsername())
-                .userPassword(passwordEncoder.encode(reqDto.getPassword()))
+                .password(passwordEncoder.encode(reqDto.getPassword()))
+                .userGrant(UserGrant.USER)
+                .userState(UserState.USER_ALIVE)
                 .build();
         this.userMapper.insertUser(user);
     }
 
-    public void login(LoginReqDto reqDto) {
-
-    }
-
-    public void logout() {
-
-    }
 }
