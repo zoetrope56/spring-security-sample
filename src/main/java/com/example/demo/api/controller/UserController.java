@@ -2,7 +2,6 @@ package com.example.demo.api.controller;
 
 import com.example.demo.api.dto.SignupReqDto;
 import com.example.demo.api.dto.UserInfoReqDto;
-import com.example.demo.api.dto.UserWhdwlReqDto;
 import com.example.demo.api.service.UserService;
 import com.example.demo.common.enumulation.ResponseCode;
 import com.example.demo.common.dto.Response;
@@ -42,7 +41,9 @@ public class UserController {
 
     @DeleteMapping("/user")
     @Operation(summary = "회원탈퇴", description = "회원탈퇴하기")
-    public ResponseEntity<Response<String>> deleteUserInfo(@RequestBody @Valid UserWhdwlReqDto reqDto) {
+    public ResponseEntity<Response<String>> deleteUserInfo(HttpServletRequest request) {
+        var userDto = jwtTokenProvider.parseClaims(request.getHeader("Authorization"));
+        userService.deleteUserInfo(userDto);
         return Response.success(ResponseCode.OK_SUCCESS);
     }
 

@@ -35,7 +35,7 @@ public class UserService {
      */
     public UserInfoReqDto getUserInfo(@Valid UserInfoReqDto reqDto) {
         final var user = userMapper.selectUserById(reqDto.getUserId());
-        // userVo null check
+        // null check
         if (ObjectUtils.isEmpty(user))
             throw new DataNotFoundException(ResponseCode.NOT_FOUND_DATA.getMessage());
 
@@ -90,4 +90,11 @@ public class UserService {
         this.userMapper.insertUser(user);
     }
 
+    public void deleteUserInfo(UserDetailDto userDto) {
+        final var user = userMapper.selectUserById(userDto.user().getUserId());
+        // null check
+        if (ObjectUtils.isEmpty(user))
+            throw new DataNotFoundException(ResponseCode.NOT_FOUND_DATA.getMessage());
+        userMapper.deleteUser(user.get());
+    }
 }
