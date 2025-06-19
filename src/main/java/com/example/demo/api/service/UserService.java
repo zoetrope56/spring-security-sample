@@ -79,7 +79,7 @@ public class UserService {
         if (userMapper.existsUserID(reqDto.getUserId()) != 0)
             throw new DataConflictException("이미 존재하는 ID 입니다.", ResponseCode.CONFLICT_DATA_ERROR);
 
-        // vo create
+        // entity creates
         User user = User.builder()
                 .userId(reqDto.getUserId())
                 .userName(reqDto.getUsername())

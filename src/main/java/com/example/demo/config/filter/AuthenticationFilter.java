@@ -71,7 +71,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
              * ID, PW를 기반으로 UsernamePasswordAuthenticationToken 토큰을 발급한다.
              * UsernamePasswordAuthenticationToken 객체가 처음 생성될 때 authenticated 필드는 기본적으로 false로 설정된다.
              */
-            return new UsernamePasswordAuthenticationToken(user.getUserId(), user.getUserPassword());
+            return new UsernamePasswordAuthenticationToken(user.getUserId(), user.getPassword());
         } catch (UsernameNotFoundException e) {
             throw new UsernameNotFoundException(e.getMessage());
         } catch (Exception e) {

@@ -54,12 +54,4 @@ public class UserController {
         return Response.success(ResponseCode.OK_SUCCESS);
     }
 
-
-
-    /*
-
-    TODO : 회원정보 수정, 비밀번호 변경, 회원탈퇴
-
-
-    */
 }
