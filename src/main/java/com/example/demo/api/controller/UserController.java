@@ -6,6 +6,7 @@ import com.example.demo.api.dto.UserWhdwlReqDto;
 import com.example.demo.api.service.UserService;
 import com.example.demo.common.enumulation.ResponseCode;
 import com.example.demo.common.dto.Response;
+import com.example.demo.config.component.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -22,6 +23,8 @@ public class UserController {
 
     private final UserService userService;
 
+    private final JwtTokenProvider jwtTokenProvider;
+
     @PostMapping("/user")
     @Operation(summary = "회원정보 조회(가입 여부 확인)", description = "회원정보 조회하기(가입 여부 확인)")
     public ResponseEntity<Response<UserInfoReqDto>> getUserInfo(@RequestBody @Valid UserInfoReqDto reqDto) {
@@ -31,8 +34,9 @@ public class UserController {
     @PutMapping("/user")
     @Operation(summary = "회원정보 수정", description = "회원정보 수정하기")
     public ResponseEntity<Response<String>> updateUserInfo(@Valid @RequestBody UserInfoReqDto reqDto, HttpServletRequest request) {
-//        request.getUserPrincipal()
-        userService.updateUserInfo(reqDto);
+        var userDto = jwtTokenProvider.parseClaims(request.getHeader("Authorization"));
+//        reqDto.setUserSeq(userDto.user().getUserSeq());
+        userService.updateUserInfo(reqDto, userDto);
         return Response.success(ResponseCode.OK_SUCCESS);
     }
 

@@ -51,6 +51,7 @@ public class JwtTokenProvider {
         val expirationDate = new Date(System.currentTimeMillis() + Long.parseLong(this.expirationTime));
         // payload
         val claimsMap = new HashMap<String, Object>();
+        claimsMap.put("userSeq", user.getUserSeq());
         claimsMap.put("userId", user.getUserId());
         claimsMap.put("userName", user.getUserName());
         claimsMap.put("userGrant", user.getUserGrant());
@@ -127,6 +128,7 @@ public class JwtTokenProvider {
 
         return new UserDetailDto(
                 User.builder()
+                        .userSeq(Long.valueOf(claims.get("userSeq").toString()))
                         .userId(String.valueOf(claims.get("userId")))
                         .userName(String.valueOf(claims.get("userName")))
                         .userGrant(UserGrant.valueOf(String.valueOf(claims.get("userGrant"))))

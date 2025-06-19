@@ -1,5 +1,6 @@
 package com.example.demo.api.service;
 
+import com.example.demo.api.dto.UserDetailDto;
 import com.example.demo.api.dto.UserInfoReqDto;
 import com.example.demo.api.dto.SignupReqDto;
 import com.example.demo.api.mapper.UserMapper;
@@ -46,18 +47,26 @@ public class UserService {
     /**
      * 회원정보 수정
      *
-     * @param reqDto 회원정보 수정요청 객체
+     * @param reqDto  회원정보 수정요청 객체
+     * @param userDto 회원정보 수정 전 객체
      */
-    public void updateUserInfo(UserInfoReqDto reqDto) {
-
-        // user seq 찾아서 해당 컬럼으로 조회 후 업데이트
-
+    public void updateUserInfo(UserInfoReqDto reqDto, UserDetailDto userDto) {
         // ID 중복 체크
         if (reqDto.getUserId() != null) {
             if (userMapper.existsUserID(reqDto.getUserId()) != 0)
                 throw new DataConflictException("이미 존재하는 ID 입니다.", ResponseCode.CONFLICT_DATA_ERROR);
         }
 
+        // user seq 찾아서 해당 컬럼으로 조회 후 업데이트
+        User user = User.builder()
+                .userSeq(userDto.user().getUserSeq())
+                .userId(reqDto.getUserId())
+                .userName(reqDto.getUsername())
+                .password(passwordEncoder.encode(reqDto.getPassword()))
+                .userState(UserState.valueOf(reqDto.getUserState()))
+                .userGrant(UserGrant.valueOf(reqDto.getUserGrant()))
+                .build();
+        userMapper.updateUserInfo(user);
     }
 
     /**
