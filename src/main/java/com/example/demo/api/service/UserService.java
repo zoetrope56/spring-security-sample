@@ -3,6 +3,7 @@ package com.example.demo.api.service;
 import com.example.demo.api.dto.UserDetailDto;
 import com.example.demo.api.dto.UserInfoReqDto;
 import com.example.demo.api.dto.SignupReqDto;
+import com.example.demo.api.dto.UserInfoResDto;
 import com.example.demo.api.mapper.UserMapper;
 import com.example.demo.api.entity.user.User;
 import com.example.demo.common.enumulation.ResponseCode;
@@ -33,13 +34,13 @@ public class UserService {
      * @param reqDto 회원정보 요청 객체
      * @return 회원정보
      */
-    public UserInfoReqDto getUserInfo(@Valid UserInfoReqDto reqDto) {
+    public UserInfoResDto getUserInfo(@Valid UserInfoReqDto reqDto) {
         final var user = userMapper.selectUserById(reqDto.getUserId());
         // null check
         if (ObjectUtils.isEmpty(user))
             throw new DataNotFoundException(ResponseCode.NOT_FOUND_DATA.getMessage());
 
-        UserInfoReqDto infoDto = UserInfoReqDto.builder().build();
+        UserInfoResDto infoDto = UserInfoResDto.builder().build();
         BeanUtils.copyProperties(user, infoDto);
         return infoDto;
     }

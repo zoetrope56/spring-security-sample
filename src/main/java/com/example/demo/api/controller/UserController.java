@@ -2,6 +2,7 @@ package com.example.demo.api.controller;
 
 import com.example.demo.api.dto.SignupReqDto;
 import com.example.demo.api.dto.UserInfoReqDto;
+import com.example.demo.api.dto.UserInfoResDto;
 import com.example.demo.api.service.UserService;
 import com.example.demo.common.enumulation.ResponseCode;
 import com.example.demo.common.dto.Response;
@@ -26,7 +27,7 @@ public class UserController {
 
     @PostMapping("/user")
     @Operation(summary = "회원정보 조회(가입 여부 확인)", description = "회원정보 조회하기(가입 여부 확인)")
-    public ResponseEntity<Response<UserInfoReqDto>> getUserInfo(@RequestBody @Valid UserInfoReqDto reqDto) {
+    public ResponseEntity<Response<UserInfoResDto>> getUserInfo(@RequestBody @Valid UserInfoReqDto reqDto) {
         return Response.success(ResponseCode.OK_SUCCESS, userService.getUserInfo(reqDto));
     }
 
